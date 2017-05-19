@@ -147,5 +147,7 @@
                     {:basic-auth [(props/es-user props) (props/es-password props)]
                      :content-type :application/json})
         es (es/connect url http-opts)]
+    (log/debug (format "Http-opts=%s user=%s password=%s" http-opts (props/es-user props) (props/es-password props)))
+    (log/info (format "Successfully connected to Elasticsearch: %s" url))
     (->Index props
              es)))

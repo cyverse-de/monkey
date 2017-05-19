@@ -90,6 +90,7 @@
   [conn props notify-received]
   (let [ch       (ch/open conn)
         queue    (prepare-queue ch props)]
+    (log/info (format "Created AMQP reindexing queue. queue=%s" queue))
     (consumer/blocking-subscribe ch queue (partial route-messages props notify-received))))
 
 
