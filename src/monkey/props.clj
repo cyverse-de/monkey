@@ -139,7 +139,7 @@
    Returns:
      the elasticsearch username"
   [^PersistentArrayMap props]
-  (get-prop props "monkey.es.user"))
+  (get-prop props "monkey.es.username"))
 
 (defn ^String es-password
   "Returns the password for authentication with elasticsearch.

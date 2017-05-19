@@ -8,7 +8,7 @@
 {{ with $v := (key (printf "%s/monkey/queue" $base)) }}monkey.amqp.queue = {{ $v }}{{ end }}
 
 {{ with $v := (key (printf "%s/elasticsearch/base" $base)) }}monkey.es.url = {{ $v }}{{ end }}
-{{ with $v := (key (printf "%s/elasticsearch/username" $base)) }}monkey.es.user = {{ $v }}{{ end }}
+{{ with $v := (key (printf "%s/elasticsearch/username" $base)) }}monkey.es.username = {{ $v }}{{ end }}
 {{ with $v := (key (printf "%s/elasticsearch/password" $base)) }}monkey.es.password = {{ $v }}{{ end }}
 {{ with $v := (key (printf "%s/elasticsearch/data-alias" $base)) }}monkey.es.index = {{ $v }}{{ end }}
 {{ with $v := (key (printf "%s/elasticsearch/batch-size" $base)) }}monkey.es.batch-size = {{ $v }}{{ end }}
