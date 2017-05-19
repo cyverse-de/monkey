@@ -8,10 +8,24 @@
             [clojurewerkz.elastisch.rest.bulk :as bulk]
             [clojurewerkz.elastisch.rest.document :as doc]
             [clojurewerkz.elastisch.rest.response :as resp]
-            [monkey.props :as props])
+            [monkey.props :as props]
+            [clojurewerkz.elastisch.arguments :as ar])
   (:import [java.util UUID]
-           [clojure.lang ISeq PersistentArrayMap]))
+           [clojure.lang ISeq PersistentArrayMap]
+           (clojurewerkz.elastisch.rest Connection)))
 
+
+(defn scroll
+  "Performs a scroll query, fetching the next page of results from a
+   query given a scroll id"
+  [^Connection conn scroll-id & args]
+  (let [opts (ar/->opts args)
+        qk   [:search_type :scroll :routing :preference]
+        qp   (select-keys opts qk)
+        body {:scroll_id scroll-id}]
+    (es/post conn (es/scroll-url conn)
+                      {:body body
+                       :query-params qp})))
 
 (defn- init-tag-seq
   [props es]
@@ -22,7 +36,7 @@
               :scroll      (props/es-scroll-timeout props)
               :size        (props/es-scroll-size props))]
     (if (resp/any-hits? res)
-      (doc/scroll es (:_scroll_id res) :scroll (props/es-scroll-timeout props))
+      (scroll es (:_scroll_id res) :scroll (props/es-scroll-timeout props))
       res)))
 
 
