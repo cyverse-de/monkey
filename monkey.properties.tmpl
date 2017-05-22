@@ -16,7 +16,7 @@
 
 {{ with $v := (key (printf "%s/metadata-db/host" $base)) }}monkey.tags.host = {{ $v }}{{ end }}
 {{ with $v := (key (printf "%s/metadata-db/port" $base)) }}monkey.tags.port = {{ $v }}{{ end }}
-{{ with $v := (key (printf "%s/metadata-db/name" $base)) }}monkey.tags.name = {{ $v }}{{ end }}
+{{ with $v := (key (printf "%s/metadata-db/name" $base)) }}monkey.tags.db = {{ $v }}{{ end }}
 {{ with $v := (key (printf "%s/metadata-db/user" $base)) }}monkey.tags.user = {{ $v }}{{ end }}
 {{ with $v := (key (printf "%s/metadata-db/pass" $base)) }}monkey.tags.password = {{ $v }}{{ end }}
 {{- end -}}
