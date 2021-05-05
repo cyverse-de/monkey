@@ -45,7 +45,7 @@
 
   (->>all-tags [_ ops]
     (let [consume (apply comp (reverse ops))]
-      (jdbc/query db ["SELECT id, value, description, owner_id, created_on, modified_on FROM tags"]
+      (jdbc/query db ["SELECT id::text, value, description, owner_id, created_on, modified_on FROM tags"]
         :result-set-fn #(dorun (consume %)))))
 
   (count-tags [_]
@@ -54,14 +54,14 @@
 
   (remove-missing [_ ids]
     (let [fmt-ids (apply str (interpose \, (map #(str \' % \') ids)))]
-      (jdbc/query db [(str "SELECT id FROM tags WHERE id IN (" fmt-ids ")")]
+      (jdbc/query db [(str "SELECT id::text FROM tags WHERE id IN (" fmt-ids ")")]
         :row-fn :id)))
 
   (tag-targets [_ tag-id]
-    (let [query "SELECT target_id, target_type
+    (let [query "SELECT target_id::text, target_type
                    FROM attached_tags
-                   WHERE tag_id = ? AND target_type IN ('file', 'folder')"]
-      (jdbc/query db [query tag-id]))))
+                   WHERE tag_id::text = ? AND target_type IN ('file', 'folder')"]
+      (jdbc/query db [query (str tag-id)]))))
 
 
 (defn with-tags
