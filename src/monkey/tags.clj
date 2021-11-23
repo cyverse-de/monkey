@@ -40,27 +40,27 @@
        It returns a sequence of file and folder UUIDs."))
 
 
-(deftype ^{:private true} Tags [db]
+(deftype ^{:private true} Tags [db schema]
   ViewsTags
 
   (->>all-tags [_ ops]
     (let [consume (apply comp (reverse ops))]
-      (jdbc/query db ["SELECT id::text, value, description, owner_id, created_on, modified_on FROM tags"]
+      (jdbc/query db [(str "SELECT id::text, value, description, owner_id, created_on, modified_on FROM " schema ".tags")]
         :result-set-fn #(dorun (consume %)))))
 
   (count-tags [_]
-    (jdbc/query db ["SELECT COUNT(*) AS cnt FROM tags"]
+    (jdbc/query db [(str "SELECT COUNT(*) AS cnt FROM " schema ".tags")]
       :result-set-fn (comp :cnt first)))
 
   (remove-missing [_ ids]
     (let [fmt-ids (apply str (interpose \, (map #(str \' % \') ids)))]
-      (jdbc/query db [(str "SELECT id::text FROM tags WHERE id IN (" fmt-ids ")")]
+      (jdbc/query db [(str "SELECT id::text FROM " schema ".tags WHERE id IN (" fmt-ids ")")]
         :row-fn :id)))
 
   (tag-targets [_ tag-id]
-    (let [query "SELECT target_id::text, target_type
-                   FROM attached_tags
-                   WHERE tag_id::text = ? AND target_type IN ('file', 'folder')"]
+    (let [query (str "SELECT target_id::text, target_type
+                   FROM " schema ".attached_tags
+                   WHERE tag_id::text = ? AND target_type IN ('file', 'folder')")]
       (jdbc/query db [query (str tag-id)]))))
 
 
@@ -78,6 +78,7 @@
   (let [host    (props/tags-host props)
         port    (props/tags-port props)
         dbname  (props/tags-db props)
+        schema  (props/tags-schema props)
         subname (str "//" host ":" port "/" dbname)
         dbspec  {:classname   "org.postgresql.Driver"
                  :subprotocol "postgresql"
@@ -85,4 +86,4 @@
                  :user        (props/tags-user props)
                  :password    (props/tags-password props)}]
     (jdbc/with-db-connection [conn dbspec]
-      (op (->Tags conn)))))
+      (op (->Tags conn schema)))))

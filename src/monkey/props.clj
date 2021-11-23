@@ -25,6 +25,7 @@
    "monkey.tags.host"                 "dedb"
    "monkey.tags.port"                 "5432"
    "monkey.tags.db"                   "metadata"
+   "monkey.tags.schema"               "public"
    "monkey.tags.user"                 "de"
    "monkey.tags.password"             "notprod"
    "monkey.tags.batch-size"           "10"})
@@ -273,6 +274,10 @@
   [^PersistentArrayMap props]
   (get-prop props "monkey.tags.db"))
 
+(defn ^String tags-schema
+  "Returns the schema to use within the tags database"
+  [^PersistentArrayMap props]
+  (get-prop props "monkey.tags.schema"))
 
 (defn ^String tags-user
   "Returns the username authorized to access the tags database.
