@@ -3,3 +3,5 @@ build.xml
 test2junit
 .lein*
 *.swp
+*.jar
+!opentelemetry-javaagent.jar

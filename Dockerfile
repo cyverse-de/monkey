@@ -1,10 +1,12 @@
-FROM clojure:lein-alpine
+FROM clojure:openjdk-17-lein-alpine
 
 WORKDIR /usr/src/app
 
 RUN apk add --no-cache git
 
-RUN ln -s "/usr/bin/java" "/bin/monkey"
+RUN ln -s "/opt/openjdk-17/bin/java" "/bin/monkey"
+
+ENV OTEL_TRACES_EXPORTER none
 
 COPY project.clj /usr/src/app/
 RUN lein deps
@@ -15,7 +17,7 @@ COPY . /usr/src/app
 RUN lein uberjar && \
     cp target/monkey-standalone.jar .
 
-ENTRYPOINT ["monkey", "-Dlogback.configurationFile=/etc/iplant/de/logging/monkey-logging.xml", "-cp", ".:monkey-standalone.jar", "monkey.core"]
+ENTRYPOINT ["monkey", "-Dlogback.configurationFile=/etc/iplant/de/logging/monkey-logging.xml", "-javaagent:/usr/src/app/opentelemetry-javaagent.jar", "-Dotel.resource.attributes=service.name=monkey", "-cp", ".:monkey-standalone.jar", "monkey.core"]
 CMD ["--help"]
 
 ARG git_commit=unknown

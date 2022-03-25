@@ -4,3 +4,5 @@ test2junit
 .lein*
 Jenkinsfile
 service.properties
+*.jar
+!opentelemetry-javaagent.jar
